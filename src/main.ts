@@ -1,5 +1,9 @@
 import * as core from '@actions/core'
-import { parseSBOMFromPath, storePredicate, generateSBOMPredicate } from './sbom'
+import {
+  parseSBOMFromPath,
+  storePredicate,
+  generateSBOMPredicate
+} from './sbom'
 
 /**
  * The main function for the action.
