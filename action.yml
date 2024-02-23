@@ -1,24 +1,101 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Attest SBOM'
+description: 'Generate SBOM attestations for build artifacts'
+author: 'GitHub'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
-
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
-    required: true
-    default: '1000'
+  path:
+    required: false
+    description: "A path to a directory on the filesystem to scan"
+    default: "."
 
-# Define your outputs here.
+  format:
+    required: false
+    description: "The SBOM format to export"
+    default: "spdx-json"
+
+  github-token:
+    description: >
+      The GitHub token used to make authenticated API requests.
+    default: ${{ github.token }}
+    required: false
+  subject-path:
+    description: >
+      Path to the artifact for which provenance will be generated. Must specify
+      exactly one of "subject-path" or "subject-digest".
+    required: false
+  subject-digest:
+    description: >
+      Digest of the subject for which provenance will be generated. Must be in
+      the form "algorithm:hex_digest" (e.g. "sha256:abc123..."). Must specify
+      exactly one of "subject-path" or "subject-digest".
+    required: false
+  subject-name:
+    description: >
+      Subject name as it should appear in the provenance statement. Required
+      unless "subject-path" is specified, in which case it will be inferred from
+      the path.
+  push-to-registry:
+    description: >
+      Whether to push the provenance statement to the image registry. Requires
+      that the "subject-name" parameter specify the fully-qualified image name
+      and that the "subject-digest" parameter be specified. Defaults to false.
+    default: false
+    required: false
+  sbom-path:
+    description: >
+      Path to the SBOM file to generate sbom statement.
+    required: false
+    default: ''
 outputs:
-  time:
-    description: 'Your output description here'
+  bundle-path:
+    description: 'The path to the file containing the attestation bundle(s).'
+    value: ${{ steps.attest.outputs.bundle-path }}
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: 'composite'
+  steps:   
+    - name: Generate random SBOM output file name
+      if: ${{ inputs.sbom-path == '' }}
+      run: echo "SBOM_FILENAME=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_ENV
+      shell: bash
+    - name: SBOM format check
+      if: ${{ inputs.sbom-path == '' }}
+      run: |
+        if [ "${{inputs.format}}" != "spdx-json" ] && [ "${{inputs.format}}" != "cyclonedx-json" ] && [ "${{inputs.format}}" != "spdx" ] && [ "${{inputs.format}}" != "cyclonedx" ] ]; then
+          echo "Invalid SBOM format. Supported formats are spdx-json, cyclonedx-json, spdx, cyclonedx"
+          exit 1
+        fi
+        echo "SBOM_FORMAT=${{inputs.format}}" >> $GITHUB_ENV
+        if [ "${{inputs.format}}" == "spdx" ]; then
+          echo "SBOM_FORMAT=spdx-json" >> $GITHUB_ENV
+        elif [ "${{inputs.format}}" == "cyclonedx" ]; then
+          echo "SBOM_FORMAT=cyclonedx-json" >> $GITHUB_ENV
+        fi
+      shell: bash
+    - name: Generate SBOM
+      if: ${{ inputs.sbom-path == '' }}
+      uses: anchore/sbom-action@v0
+      with:
+        path: ${{inputs.path}}
+        output-file: ${{env.SBOM_FILENAME}}
+        format: ${{env.SBOM_FORMAT}}
+        config: ${{inputs.config}}
+    - uses: ./generate-sbom-statement
+      id: generate-sbom-statement
+      with:
+        github-token: ${{ inputs.github-token }}
+        subject-path: ${{ inputs.subject-path }}
+        subject-digest: ${{ inputs.subject-digest }}
+        subject-name: ${{ inputs.subject-name }}
+        push-to-registry: ${{ inputs.push-to-registry }}
+        sbom-path: ${{ inputs.sbom-path || env.SBOM_FILENAME }}
+    - uses: actions/attest@main
+      id: attest
+      with:
+        github-token: ${{ inputs.github-token }}
+        subject-path: ${{ inputs.subject-path }}
+        subject-digest: ${{ inputs.subject-digest }}
+        subject-name: ${{ inputs.subject-name }}
+        push-to-registry: ${{ inputs.push-to-registry }}
+        predicate-type: ${{ steps.generate-sbom-statement.outputs.predicate-type }}
+        predicate-path: ${{ steps.generate-sbom-statement.outputs.predicate-path }}

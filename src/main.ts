@@ -1,5 +1,9 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import {
+  parseSBOMFromPath,
+  storePredicate,
+  generateSBOMPredicate
+} from './sbom'
 
 /**
  * The main function for the action.
@@ -7,20 +11,21 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const sbomPath = core.getInput('sbom-path')
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    core.debug(`Reading SBOM from ${sbomPath}`)
+    const sbom = await parseSBOMFromPath(sbomPath)
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    // Calculate subject from inputs and generate provenance
+    const predicate = generateSBOMPredicate(sbom)
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
+    const predicatePath = storePredicate(predicate)
+
+    core.setOutput('predicate-path', predicatePath)
+    core.setOutput('predicate-type', predicate.type)
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(`${err}`)
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    core.setFailed(error.message)
   }
 }
