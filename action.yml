@@ -87,7 +87,7 @@ runs:
         subject-name: ${{ inputs.subject-name }}
         push-to-registry: ${{ inputs.push-to-registry }}
         sbom-path: ${{ inputs.sbom-path || env.SBOM_FILENAME }}
-    - uses: actions/attest
+    - uses: actions/attest@main
       id: attest
       with:
         github-token: ${{ inputs.github-token }}
