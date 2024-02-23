@@ -64,7 +64,7 @@ jobs:
         with:
           subject-digest: 'sha256:7d070f6b64d9bcc530fe99cc21eaaa4b3c364e0b2d367d7735671fa202a03b32'
           subject-name: 'subject'
-          sbom-path: 'testing/sbom.json'
+          sbom-path: '__tests__/data/sbom.json'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Dump output
         run: jq < ${{ steps.attest-sbom.outputs.bundle-path }}
