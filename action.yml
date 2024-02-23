@@ -55,9 +55,11 @@ runs:
   using: 'composite'
   steps:   
     - name: Generate random SBOM output file name
+      if: ${{ inputs.sbom-path == '' }}
       run: echo "SBOM_FILENAME=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_ENV
       shell: bash
     - name: SBOM format check
+      if: ${{ inputs.sbom-path == '' }}
       run: |
         if [ "${{inputs.format}}" != "spdx-json" ] && [ "${{inputs.format}}" != "cyclonedx-json" ] && [ "${{inputs.format}}" != "spdx" ] && [ "${{inputs.format}}" != "cyclonedx" ] ]; then
           echo "Invalid SBOM format. Supported formats are spdx-json, cyclonedx-json, spdx, cyclonedx"
@@ -71,7 +73,7 @@ runs:
         fi
       shell: bash
     - name: Generate SBOM
-      if: github.event.inputs.sbom-path == ''
+      if: ${{ inputs.sbom-path == '' }}
       uses: anchore/sbom-action@v0
       with:
         path: ${{inputs.path}}
