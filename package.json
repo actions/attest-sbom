@@ -25,7 +25,6 @@
   },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
-    "prepackage": "npm run build --workspace packages/attest",
     "ci-test": "jest",
     "coverage": "make-coverage-badge --output-path ./badges/coverage.svg",
     "format:write": "prettier --write **/*.ts",

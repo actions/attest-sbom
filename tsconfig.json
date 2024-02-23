@@ -15,8 +15,5 @@
     "skipLibCheck": true,
     "newLine": "lf"
   },
-  "include": [ "/src/**/*" ],
-  "references": [
-    { "path": "./packages/attest" }
-  ]
+  "include": [ "/src/**/*" ]
 }
