@@ -80,7 +80,7 @@ runs:
         output-file: ${{env.SBOM_FILENAME}}
         format: ${{env.SBOM_FORMAT}}
         config: ${{inputs.config}}
-    - uses: ./generate-sbom-statement
+    - uses: actions/attest-sbom/generate-sbom-statement@main
       id: generate-sbom-statement
       with:
         github-token: ${{ inputs.github-token }}
