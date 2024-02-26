@@ -7,6 +7,18 @@ inputs:
     required: false
     description: "A path to a directory on the filesystem to scan"
     default: "."
+  
+  image:
+    required: false
+    description: "A container image to scan"
+
+  registry-username:
+    required: false
+    description: "The registry username"
+
+  registry-password:
+    required: false
+    description: "The registry password"
 
   format:
     required: false
@@ -76,10 +88,14 @@ runs:
       if: ${{ inputs.sbom-path == '' }}
       uses: anchore/sbom-action@v0
       with:
+        image: ${{inputs.image}}
+        registry-username: ${{inputs.registry-username}}
+        registry-password: ${{inputs.registry-password}}
         path: ${{inputs.path}}
         output-file: ${{env.SBOM_FILENAME}}
         format: ${{env.SBOM_FORMAT}}
         config: ${{inputs.config}}
+        github-token: ${{inputs.github-token}}
     - uses: ./generate-sbom-statement
       id: generate-sbom-statement
       with:
