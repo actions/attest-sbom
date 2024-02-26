@@ -96,7 +96,7 @@ runs:
         format: ${{env.SBOM_FORMAT}}
         config: ${{inputs.config}}
         github-token: ${{inputs.github-token}}
-    - uses: ./generate-sbom-statement
+    - uses: actions/attest-sbom/generate-sbom-statement@main
       id: generate-sbom-statement
       with:
         github-token: ${{ inputs.github-token }}
