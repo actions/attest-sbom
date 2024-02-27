@@ -1,14 +1,11 @@
 import fs from 'fs'
 import * as path from 'path'
 
+import type { Predicate } from '@actions/attest'
+
 export type SBOM = {
   type: 'spdx' | 'cyclonedx'
   object: object
-}
-
-type Predicate = {
-  type: string
-  params: object
 }
 
 export async function parseSBOMFromPath(filePath: string): Promise<SBOM> {
