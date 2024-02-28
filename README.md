@@ -1,7 +1,7 @@
 # attest-sbom
 
-GitHub Action to create, sign and upload a SBOM (Software Bill of Materials) attestation for
-artifacts built as part of a workflow.
+GitHub Action to create, sign and upload a SBOM (Software Bill of Materials)
+attestation for artifacts built as part of a workflow.
 
 ## Usage
 
@@ -38,8 +38,8 @@ attest,
 
 ### What is being attested?
 
-The generated attestation is a Software Bill of Materials (SBOM), which is essentially a 
-detailed list of all the components in a software artifact. 
+The generated attestation is a Software Bill of Materials (SBOM), which is
+essentially a detailed list of all the components in a software artifact.
 
 ```json
 {
@@ -75,7 +75,8 @@ detailed list of all the components in a software artifact.
         "supplier": "NOASSERTION",
         "downloadLocation": "NOASSERTION",
         "filesAnalyzed": false,
-        "sourceInfo": "acquired package info from installed node module manifest file: /yarn.lock",
+        "sourceInfo": 
+        "acquired package info from installed node module manifest file: /yarn.lock",
         "licenseConcluded": "NOASSERTION",
         "licenseDeclared": "Apache-2.0",
         "copyrightText": "NOASSERTION",
@@ -83,7 +84,8 @@ detailed list of all the components in a software artifact.
           {
             "referenceCategory": "SECURITY",
             "referenceType": "cpe23Type",
-            "referenceLocator": "cpe:2.3:a:\\@ampproject\\/remapping:\\@ampproject\\/remapping:2.2.1:*:*:*:*:*:*:*"
+            "referenceLocator": 
+            "cpe:2.3:a:\\@ampproject\\/remapping:\\@ampproject\\/remapping:2.2.1:*:*:*:*:*:*:*"
           },
           {
             "referenceCategory": "PACKAGE-MANAGER",
@@ -122,13 +124,16 @@ Attestations can be verified using the [gh-attestation][2] extension for the
 See [action.yml](action.yml)
 
 ### Inputs
-- `path` - A path to a directory on the filesystem to scan and generate SBOM. 
 
-  If `sbom-path` is specified, the path will not be used to generate SBOM. 
+- `path` - A path to a directory on the filesystem to scan and generate SBOM.
 
-- `sbom-path` - A path to a directory on the filesystem which contains SBOM for signing and uploading. 
+  If `sbom-path` is specified, the path will not be used to generate SBOM.
 
-  If `sbom-path` is not specified, the default implementation will be used `path` to generate SBOM for signing.
+- `sbom-path` - A path to a directory on the filesystem which contains SBOM for signing
+  and uploading.
+
+  If `sbom-path` is not specified, the default implementation will be used
+  `path` to generate SBOM for signing.
 
 - `format` - The format of the SBOM. Either `spdx` or `cyclonedx`
 
@@ -162,8 +167,8 @@ See [action.yml](action.yml)
 
 ### Outputs
 
-- `bundle-path` - The file path of JSON-serialized [Sigstore bundle][4] containing the attestation
-  and related verification material.
+- `bundle-path` - The file path of JSON-serialized [Sigstore bundle][4] containing
+  the attestation and related verification material.
 
 ## Sample Workflows
 
