@@ -10,16 +10,14 @@ import os from 'os'
 import * as path from 'path'
 
 describe('parseSBOMFromPath', () => {
-  let homedirSpy: jest.SpyInstance<string, []> | undefined
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom'))
+  let tempDir = '/'
 
   beforeEach(() => {
-    homedirSpy = jest.spyOn(os, 'homedir')
-    homedirSpy.mockReturnValue(tempDir)
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom'))
   })
 
   afterEach(() => {
-    homedirSpy?.mockRestore()
+    fs.rmdirSync(tempDir, { recursive: true })
   })
 
   it('correctly parses an SPDX file', async () => {

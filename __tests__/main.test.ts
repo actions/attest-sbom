@@ -8,29 +8,26 @@ import * as path from 'path'
 jest.mock('@actions/core')
 const getInputMock = jest.spyOn(core, 'getInput')
 const setOutputMock = jest.spyOn(core, 'setOutput')
-
 const setFailedMock = jest.spyOn(core, 'setFailed')
 
 // Ensure that setFailed doesn't set an exit code during tests
 setFailedMock.mockImplementation(() => {})
 
 describe('SBOM Action', () => {
-  let homedirSpy: jest.SpyInstance<string, []> | undefined
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom'))
-
+  let tempDir = '/'
   let outputs = {} as Record<string, string>
 
   beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom'))
+
     jest.resetAllMocks()
-    homedirSpy = jest.spyOn(os, 'homedir')
-    homedirSpy.mockReturnValue(tempDir)
     setOutputMock.mockImplementation((key, value) => {
       outputs[key] = value
     })
   })
 
   afterEach(() => {
-    homedirSpy?.mockRestore()
+    fs.rmdirSync(tempDir, { recursive: true })
     outputs = {}
   })
 
