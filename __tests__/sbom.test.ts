@@ -6,18 +6,30 @@ import {
 } from '../src/sbom'
 import type { Predicate } from '@actions/attest'
 import * as fs from 'fs'
-
-// Mock the specific function before your tests or in a beforeEach if you need it fresh for each test
-fs.promises.readFile = jest.fn().mockImplementation(() => 'mocked value')
+import os from 'os'
+import * as path from 'path'
 
 describe('parseSBOMFromPath', () => {
+  let homedirSpy: jest.SpyInstance<string, []> | undefined
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom'))
+
+  beforeEach(() => {
+    homedirSpy = jest.spyOn(os, 'homedir')
+    homedirSpy.mockReturnValue(tempDir)
+  })
+
+  afterEach(() => {
+    homedirSpy?.mockRestore()
+  })
+
   it('correctly parses an SPDX file', async () => {
     const spdxSBOM = JSON.stringify({
       spdxVersion: 'SPDX-2.2',
       SPDXID: 'SPDXRef-DOCUMENT'
     })
-    ;(fs.promises.readFile as jest.Mock).mockResolvedValue(spdxSBOM)
-    await expect(parseSBOMFromPath('dummyPath')).resolves.toEqual({
+    const filePath = path.join(tempDir, 'spdxSBOM.json')
+    fs.writeFileSync(filePath, spdxSBOM)
+    await expect(parseSBOMFromPath(filePath)).resolves.toEqual({
       type: 'spdx',
       object: JSON.parse(spdxSBOM)
     })
@@ -29,16 +41,19 @@ describe('parseSBOMFromPath', () => {
       serialNumber: '123',
       specVersion: '1.2'
     })
-    ;(fs.promises.readFile as jest.Mock).mockResolvedValue(cycloneDXSBOM)
-    await expect(parseSBOMFromPath('dummyPath')).resolves.toEqual({
+    const filePath = path.join(tempDir, 'cyclonedxSBOM.json')
+    fs.writeFileSync(filePath, cycloneDXSBOM)
+
+    await expect(parseSBOMFromPath(filePath)).resolves.toEqual({
       type: 'cyclonedx',
       object: JSON.parse(cycloneDXSBOM)
     })
   })
 
   it('throws an error for unsupported SBOM formats', async () => {
-    (fs.promises.readFile as jest.Mock).mockResolvedValue('{}')
-    await expect(parseSBOMFromPath('dummyPath')).rejects.toThrow(
+    const filePath = path.join(tempDir, 'random.json')
+    fs.writeFileSync(filePath, JSON.stringify({ random: 'value' }))
+    await expect(parseSBOMFromPath(filePath)).rejects.toThrow(
       'Unsupported SBOM format'
     )
   })
