@@ -84,11 +84,11 @@ jobs:
           subject-digest: 'sha256:7d070f6b64d9bcc530fe99cc21eaaa4b3c364e0b2d367d7735671fa202a03b32'
           subject-name: 'subject'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          format: 'spdx'
+          sbom-format: 'spdx'
       - name: Run attest-sbom with cyclonedx format
         uses: ./
         with:
           subject-digest: 'sha256:7d070f6b64d9bcc530fe99cc21eaaa4b3c364e0b2d367d7735671fa202a03b32'
           subject-name: 'subject'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          format: 'cyclonedx'
+          sbom-format: 'cyclonedx'

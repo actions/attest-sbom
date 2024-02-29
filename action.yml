@@ -3,37 +3,39 @@ description: 'Generate SBOM attestations for build artifacts'
 author: 'GitHub'
 
 inputs:
-  path:
-    required: false
-    description: "A path to a directory on the filesystem to scan"
-    default: "."
-
-  format:
-    required: false
-    description: "The SBOM format to export"
-    default: "spdx-json"
-
-  github-token:
-    description: >
-      The GitHub token used to make authenticated API requests.
-    default: ${{ github.token }}
-    required: false
   subject-path:
     description: >
-      Path to the artifact for which provenance will be generated. Must specify
-      exactly one of "subject-path" or "subject-digest".
+      Path to the artifact serving as the subject of the attestation. Must
+      specify exactly one of "subject-path" or "subject-digest".
     required: false
   subject-digest:
     description: >
-      Digest of the subject for which provenance will be generated. Must be in
-      the form "algorithm:hex_digest" (e.g. "sha256:abc123..."). Must specify
-      exactly one of "subject-path" or "subject-digest".
+      SHA256 digest of the subject for for the attestation. Must be in the form
+      "sha256:hex_digest" (e.g. "sha256:abc123..."). Must specify exactly one of
+      "subject-path" or "subject-digest".
     required: false
   subject-name:
     description: >
-      Subject name as it should appear in the provenance statement. Required
-      unless "subject-path" is specified, in which case it will be inferred from
-      the path.
+      Subject name as it should appear in the attestation. Required unless
+      "subject-path" is specified, in which case it will be inferred from the
+      path.
+  sbom-path:
+    description: >
+      Path to the JSON-formatted SBOM file to attest. When specified, the
+      "scan-path" and "sbom-format" inputs are ignored.
+    required: false
+  scan-path:
+    description: >
+      Path on the filesystem to scan for SBOM generation. Ignored if "sbom-path"
+      is specified.
+    default: ${{ github.workspace }}
+    required: false
+  sbom-format:
+    description: >
+      Format to use for the generated SBOM output. Supported formats are "spdx"
+      and "cyclonedx". Ignored if "sbom-path" is specified.
+    default: 'spdx'
+    required: false
   push-to-registry:
     description: >
       Whether to push the provenance statement to the image registry. Requires
@@ -41,11 +43,11 @@ inputs:
       and that the "subject-digest" parameter be specified. Defaults to false.
     default: false
     required: false
-  sbom-path:
+  github-token:
     description: >
-      Path to the SBOM file to generate sbom statement.
+      The GitHub token used to make authenticated API requests.
+    default: ${{ github.token }}
     required: false
-    default: ''
 outputs:
   bundle-path:
     description: 'The path to the file containing the attestation bundle(s).'
@@ -53,49 +55,44 @@ outputs:
 
 runs:
   using: 'composite'
-  steps:   
+  steps:
     - name: Generate random SBOM output file name
       if: ${{ inputs.sbom-path == '' }}
-      run: echo "SBOM_FILENAME=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_ENV
+      run:
+        echo "SBOM_FILENAME=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_ENV
       shell: bash
     - name: SBOM format check
       if: ${{ inputs.sbom-path == '' }}
       run: |
-        if [ "${{inputs.format}}" != "spdx-json" ] && [ "${{inputs.format}}" != "cyclonedx-json" ] && [ "${{inputs.format}}" != "spdx" ] && [ "${{inputs.format}}" != "cyclonedx" ] ]; then
-          echo "Invalid SBOM format. Supported formats are spdx-json, cyclonedx-json, spdx, cyclonedx"
+        if [ "${{inputs.sbom-format}}" != "spdx" ] && [ "${{inputs.sbom-format}}" != "cyclonedx" ] ]; then
+          echo "Invalid SBOM format. Supported formats are spdx and cyclonedx."
           exit 1
-        fi
-        echo "SBOM_FORMAT=${{inputs.format}}" >> $GITHUB_ENV
-        if [ "${{inputs.format}}" == "spdx" ]; then
+        elif [ "${{inputs.sbom-format}}" == "spdx" ]; then
           echo "SBOM_FORMAT=spdx-json" >> $GITHUB_ENV
-        elif [ "${{inputs.format}}" == "cyclonedx" ]; then
+        elif [ "${{inputs.sbom-format}}" == "cyclonedx" ]; then
           echo "SBOM_FORMAT=cyclonedx-json" >> $GITHUB_ENV
         fi
       shell: bash
     - name: Generate SBOM
       if: ${{ inputs.sbom-path == '' }}
-      uses: anchore/sbom-action@v0
+      uses: anchore/sbom-action@b6a39da80722a2cb0ef5d197531764a89b5d48c3 # v0.15.8
       with:
-        path: ${{inputs.path}}
+        path: ${{inputs.scan-path}}
         output-file: ${{env.SBOM_FILENAME}}
         format: ${{env.SBOM_FORMAT}}
-        config: ${{inputs.config}}
-    - uses: actions/attest-sbom/generate-sbom-statement@main
-      id: generate-sbom-statement
+    - uses: actions/attest-sbom/generate-sbom-predicate@readme
+      id: generate-sbom-predicate
       with:
-        github-token: ${{ inputs.github-token }}
-        subject-path: ${{ inputs.subject-path }}
-        subject-digest: ${{ inputs.subject-digest }}
-        subject-name: ${{ inputs.subject-name }}
-        push-to-registry: ${{ inputs.push-to-registry }}
         sbom-path: ${{ inputs.sbom-path || env.SBOM_FILENAME }}
     - uses: actions/attest@main
       id: attest
       with:
-        github-token: ${{ inputs.github-token }}
         subject-path: ${{ inputs.subject-path }}
         subject-digest: ${{ inputs.subject-digest }}
         subject-name: ${{ inputs.subject-name }}
         push-to-registry: ${{ inputs.push-to-registry }}
-        predicate-type: ${{ steps.generate-sbom-statement.outputs.predicate-type }}
-        predicate-path: ${{ steps.generate-sbom-statement.outputs.predicate-path }}
+        predicate-type:
+          ${{ steps.generate-sbom-predicate.outputs.predicate-type }}
+        predicate-path:
+          ${{ steps.generate-sbom-predicate.outputs.predicate-path }}
+        github-token: ${{ inputs.github-token }}
