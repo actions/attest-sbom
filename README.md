@@ -1,7 +1,7 @@
 # `actions/attest-sbom`
 
 Generate signed SBOM attestations for workflow artifacts. Internally powered by
-the [@actions/attest-sbom][1] package.
+the [@actions/attest][1] package.
 
 Attestations bind some subject (a named artifact along with its digest) to a a
 Software Bill of Materials (SBOM) using the [in-toto][2] format. The action
