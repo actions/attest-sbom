@@ -57,33 +57,35 @@ runs:
   using: 'composite'
   steps:
     - name: Generate random SBOM output file name
-      if: ${{ inputs.sbom-path == '' }}
+      if: inputs.sbom-path == ''
+      id: sbom-output
       run:
-        echo "SBOM_FILENAME=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_ENV
+        echo "path=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_OUTPUT
       shell: bash
     - name: SBOM format check
-      if: ${{ inputs.sbom-path == '' }}
+      id: check-sbom-format
+      if: inputs.sbom-path == ''
       run: |
         if [ "${{inputs.sbom-format}}" != "spdx" ] && [ "${{inputs.sbom-format}}" != "cyclonedx" ] ]; then
           echo "Invalid SBOM format. Supported formats are spdx and cyclonedx."
           exit 1
         elif [ "${{inputs.sbom-format}}" == "spdx" ]; then
-          echo "SBOM_FORMAT=spdx-json" >> $GITHUB_ENV
+          echo "format=spdx-json" >> $GITHUB_OUTPUT
         elif [ "${{inputs.sbom-format}}" == "cyclonedx" ]; then
-          echo "SBOM_FORMAT=cyclonedx-json" >> $GITHUB_ENV
+          echo "format=cyclonedx-json" >> $GITHUB_OUTPUT
         fi
       shell: bash
     - name: Generate SBOM
-      if: ${{ inputs.sbom-path == '' }}
+      if: inputs.sbom-path == ''
       uses: anchore/sbom-action@b6a39da80722a2cb0ef5d197531764a89b5d48c3 # v0.15.8
       with:
-        path: ${{inputs.scan-path}}
-        output-file: ${{env.SBOM_FILENAME}}
-        format: ${{env.SBOM_FORMAT}}
+        path: ${{ inputs.scan-path }}
+        output-file: ${{ steps.sbom-output.outputs.path }}
+        format: ${{ steps.check-sbom-format.outputs.format }}
     - uses: actions/attest-sbom/generate-sbom-predicate@main
       id: generate-sbom-predicate
       with:
-        sbom-path: ${{ inputs.sbom-path || env.SBOM_FILENAME }}
+        sbom-path: ${{ inputs.sbom-path || steps.sbom-output.outputs.path }}
     - uses: actions/attest@main
       id: attest
       with:
