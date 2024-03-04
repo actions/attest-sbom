@@ -1,0 +1,19 @@
+name: 'SBOM Predicate'
+description: 'Generate predicate for SBOM attestations'
+author: 'GitHub'
+
+inputs:
+  sbom-path:
+    description: >
+      Path to the SBOM file to generate sbom statement
+    required: false
+outputs:
+  predicate-path:
+    description: >
+      The path to the JSON-serialized of the attestation predicate
+  predicate-type:
+    description: >
+      URI identifying the type of the predicate.
+runs:
+  using: node20
+  main: ../dist/index.js
