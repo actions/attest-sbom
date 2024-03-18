@@ -83,7 +83,7 @@ runs:
         path: ${{ inputs.scan-path }}
         output-file: ${{ steps.sbom-output.outputs.path }}
         format: ${{ steps.check-sbom-format.outputs.format }}
-    - uses: actions/attest-sbom/predicate@847c6befa7ce187c962fa6c3e6cd3c96e4da9565 # predicate@0.1.0
+    - uses: actions/attest-sbom/predicate@5d89d51206f91868930f5354099a18302fc32352 # predicate@0.1.0
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path || steps.sbom-output.outputs.path }}
