@@ -50,7 +50,7 @@ jobs:
     name: Test attest-sbom action with local sbom file 
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      attestations: write
       id-token: write
 
     steps:
@@ -73,7 +73,7 @@ jobs:
     name: Test attest-sbom action
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      attestations: write
       id-token: write
 
     steps:
