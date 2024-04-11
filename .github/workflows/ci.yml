@@ -75,6 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       attestations: write
+      contents: read
       id-token: write
 
     steps:
