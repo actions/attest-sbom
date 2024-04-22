@@ -215,7 +215,6 @@ jobs:
 
 [1]: https://github.com/actions/toolkit/tree/main/packages/attest
 [2]: https://github.com/in-toto/attestation/tree/main/spec/v1
-[3]: https://github.com/anchore/sbom-action
 [4]: https://spdx.dev/
 [5]: https://cyclonedx.org/
 [6]: https://www.sigstore.dev/
