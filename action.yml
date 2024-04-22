@@ -24,18 +24,6 @@ inputs:
       Path to the JSON-formatted SBOM file to attest. When specified, the
       "scan-path" and "sbom-format" inputs are ignored.
     required: false
-  scan-path:
-    description: >
-      Path on the filesystem to scan for SBOM generation. Ignored if "sbom-path"
-      is specified.
-    default: ${{ github.workspace }}
-    required: false
-  sbom-format:
-    description: >
-      Format to use for the generated SBOM output. Supported formats are "spdx"
-      and "cyclonedx". Ignored if "sbom-path" is specified.
-    default: 'spdx'
-    required: false
   push-to-registry:
     description: >
       Whether to push the provenance statement to the image registry. Requires
@@ -57,32 +45,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Generate random SBOM output file name
-      if: inputs.sbom-path == ''
-      id: sbom-output
-      run:
-        echo "path=${{ runner.temp }}/sbom_$(openssl rand -hex 6).json" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: SBOM format check
-      id: check-sbom-format
-      if: inputs.sbom-path == ''
-      run: |
-        if [ "${{inputs.sbom-format}}" != "spdx" ] && [ "${{inputs.sbom-format}}" != "cyclonedx" ] ]; then
-          echo "Invalid SBOM format. Supported formats are spdx and cyclonedx."
-          exit 1
-        elif [ "${{inputs.sbom-format}}" == "spdx" ]; then
-          echo "format=spdx-json" >> $GITHUB_OUTPUT
-        elif [ "${{inputs.sbom-format}}" == "cyclonedx" ]; then
-          echo "format=cyclonedx-json" >> $GITHUB_OUTPUT
-        fi
-      shell: bash
-    - name: Generate SBOM
-      if: inputs.sbom-path == ''
-      uses: anchore/sbom-action@ab5d7b5f48981941c4c5d6bf33aeb98fe3bae38c # v0.15.10
-      with:
-        path: ${{ inputs.scan-path }}
-        output-file: ${{ steps.sbom-output.outputs.path }}
-        format: ${{ steps.check-sbom-format.outputs.format }}
     - uses: actions/attest-sbom/predicate@847c6befa7ce187c962fa6c3e6cd3c96e4da9565 # predicate@0.1.0
       id: generate-sbom-predicate
       with:
