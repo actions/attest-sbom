@@ -46,11 +46,12 @@ jobs:
         id: npm-ci-test
         run: npm run ci-test
 
-  test-attest-sbom-with-local-sbom-file:
+  test-attest-sbom:
     name: Test attest-sbom action with local sbom file 
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      attestations: write
+      contents: read
       id-token: write
 
     steps:

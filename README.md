@@ -31,11 +31,11 @@ attest:
    ```yaml
    permissions:
      id-token: write
-     contents: write # TODO: Update this
+     attestations: write
    ```
 
    The `id-token` permission gives the action the ability to mint the OIDC token
-   necessary to request a Sigstore signing certificate. The `contents`
+   necessary to request a Sigstore signing certificate. The `attestations`
    permission is necessary to persist the attestation.
 
 1. Add the following to your workflow after your artifact has been built:
@@ -120,7 +120,8 @@ jobs:
   build:
     permissions:
       id-token: write
-      contents: write
+      contents: read
+      attestations: write
 
     steps:
       - name: Checkout
@@ -178,7 +179,8 @@ jobs:
     permissions:
       id-token: write
       packages: write
-      contents: write
+      contents: read
+      attestations: write
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
@@ -213,7 +215,6 @@ jobs:
 
 [1]: https://github.com/actions/toolkit/tree/main/packages/attest
 [2]: https://github.com/in-toto/attestation/tree/main/spec/v1
-[3]: https://github.com/anchore/sbom-action
 [4]: https://spdx.dev/
 [5]: https://cyclonedx.org/
 [6]: https://www.sigstore.dev/
