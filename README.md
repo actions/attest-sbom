@@ -38,7 +38,8 @@ attest:
    necessary to request a Sigstore signing certificate. The `attestations`
    permission is necessary to persist the attestation.
 
-1. Add the following to your workflow after your artifact has been built:
+1. Add the following to your workflow after your artifact has been built and
+   your SBOM has been generated:
 
    ```yaml
    - uses: actions/attest-sbom@v1
@@ -56,7 +57,7 @@ attest:
 See [action.yml](action.yml)
 
 ```yaml
-- uses: actions/attest@v1
+- uses: actions/attest-sbom@v1
   with:
     # Path to the artifact serving as the subject of the attestation. Must
     # specify exactly one of "subject-path" or "subject-digest".
@@ -129,12 +130,15 @@ jobs:
       - name: Build artifact
         run: make my-app
       - name: Generate SBOM
-        run: make sbom
+        uses: anchore/sbom-action@v0
+        with:
+          format: 'spdx-json'
+          output-file: 'sbom.spdx.json'
       - name: Attest
         uses: actions/attest-sbom@v1
         with:
           subject-path: '${{ github.workspace }}/my-app'
-          sbom-path: '${{ github.workspace }}/my-app.sbom.spdx.json'
+          sbom-path: 'sbom.spdx.json'
 ```
 
 ### Identify Subjects by Wildcard
@@ -202,7 +206,11 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       - name: Generate SBOM
-        run: make sbom
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          format: 'cyclonedx-json'
+          output-file: 'sbom.cyclonedx.json'
       - name: Attest
         uses: actions/attest-sbom@v1
         id: attest
