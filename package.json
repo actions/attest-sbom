@@ -1,21 +1,21 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
+  "name": "actions/attest-sbom",
+  "description": "Generate signed SBOM attestations",
+  "version": "1.0.0",
   "author": "",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/actions/attest-sbom",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/actions/attest-sbom.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/actions/attest-sbom/issues"
   },
   "keywords": [
     "actions",
-    "node",
-    "setup"
+    "attestation",
+    "sbom"
   ],
   "exports": {
     ".": "./dist/index.js"
