@@ -1,6 +1,9 @@
 name: 'Attest SBOM'
 description: 'Generate SBOM attestations for build artifacts'
 author: 'GitHub'
+branding:
+  color: 'blue'
+  icon: 'paperclip'
 
 inputs:
   subject-path:
