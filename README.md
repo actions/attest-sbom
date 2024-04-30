@@ -18,7 +18,7 @@ Once the attestation has been created and signed, it will be uploaded to the GH
 attestations API and associated with the repository from which the workflow was
 initiated.
 
-Attestations can be verified using the `attestation` command in the [GitHub
+Attestations can be verified using the [`attestation` command in the GitHub
 CLI][7].
 
 ## Usage
@@ -226,7 +226,7 @@ jobs:
 [4]: https://spdx.dev/
 [5]: https://cyclonedx.org/
 [6]: https://www.sigstore.dev/
-[7]: https://cli.github.com/
+[7]: https://cli.github.com/manual/gh_attestation_verify
 [8]:
   https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_bundle.proto
 [9]: https://jsonlines.org/
