@@ -21,6 +21,9 @@ initiated.
 Attestations can be verified using the [`attestation` command in the GitHub
 CLI][7].
 
+See [Using artifact attestations to establish provenance for builds][11]
+for more information on artifact attestations.
+
 ## Usage
 
 Within the GitHub Actions workflow which builds some artifact you would like to
@@ -231,3 +234,4 @@ jobs:
   https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_bundle.proto
 [9]: https://jsonlines.org/
 [10]: https://github.com/actions/toolkit/tree/main/packages/glob#patterns
+[11]: https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds
