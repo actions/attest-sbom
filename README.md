@@ -51,7 +51,7 @@ attest:
        sbom-path: '<PATH TO SBOM>'
    ```
 
-   The `subject-path` parameter should identity the artifact for which you want
+   The `subject-path` parameter should identify the artifact for which you want
    to generate an SBOM attestation. The `sbom-path` parameter should identify
    the SBOM document to be associated with the subject.
 
@@ -66,7 +66,7 @@ See [action.yml](action.yml)
     # specify exactly one of "subject-path" or "subject-digest".
     subject-path:
 
-    # SHA256 digest of the subject for for the attestation. Must be in the form
+    # SHA256 digest of the subject for the attestation. Must be in the form
     # "sha256:hex_digest" (e.g. "sha256:abc123..."). Must specify exactly one
     # of "subject-path" or "subject-digest".
     subject-digest:
