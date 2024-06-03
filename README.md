@@ -21,8 +21,8 @@ initiated.
 Attestations can be verified using the [`attestation` command in the GitHub
 CLI][7].
 
-See [Using artifact attestations to establish provenance for builds][11]
-for more information on artifact attestations.
+See [Using artifact attestations to establish provenance for builds][11] for
+more information on artifact attestations.
 
 ## Usage
 
@@ -63,7 +63,8 @@ See [action.yml](action.yml)
 - uses: actions/attest-sbom@v1
   with:
     # Path to the artifact serving as the subject of the attestation. Must
-    # specify exactly one of "subject-path" or "subject-digest".
+    # specify exactly one of "subject-path" or "subject-digest". May contain a
+    # glob pattern or list of paths (total subject count cannot exceed 2500).
     subject-path:
 
     # SHA256 digest of the subject for the attestation. Must be in the form
@@ -76,8 +77,8 @@ See [action.yml](action.yml)
     # path.
     subject-name:
 
-    # Path to the JSON-formatted SBOM file to attest. When specified, the
-    # "scan-path" and "sbom-format" inputs are ignored.
+    # Path to the JSON-formatted SBOM file to attest. File size cannot exceed
+    # 16MB.
     sbom-path:
 
     # Whether to push the attestation to the image registry. Requires that the
@@ -105,6 +106,19 @@ Attestations are saved in the JSON-serialized [Sigstore bundle][8] format.
 If multiple subjects are being attested at the same time, each attestation will
 be written to the output file on a separate line (using the [JSON Lines][9]
 format).
+
+## Attestation Limits
+
+### Subject Limits
+
+No more than 2500 subjects can be attested at the same time. Subjects will be
+processed in batches 50. After the initial group of 50, each subsequent batch
+will incur an exponentially increasing amount of delay (capped at 1 minute of
+delay per batch) to avoid overwhelming the attestation API.
+
+### SBOM Limits
+
+The SBOM supplied via the `sbom-path` input cannot exceed 16MB.
 
 ## Examples
 
@@ -234,4 +248,5 @@ jobs:
   https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_bundle.proto
 [9]: https://jsonlines.org/
 [10]: https://github.com/actions/toolkit/tree/main/packages/glob#patterns
-[11]: https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds
+[11]:
+  https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds

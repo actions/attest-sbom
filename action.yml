@@ -9,7 +9,8 @@ inputs:
   subject-path:
     description: >
       Path to the artifact serving as the subject of the attestation. Must
-      specify exactly one of "subject-path" or "subject-digest".
+      specify exactly one of "subject-path" or "subject-digest". May contain a
+      glob pattern or list of paths (total subject count cannot exceed 2500).
     required: false
   subject-digest:
     description: >
@@ -24,9 +25,9 @@ inputs:
       path.
   sbom-path:
     description: >
-      Path to the JSON-formatted SBOM file to attest. When specified, the
-      "scan-path" and "sbom-format" inputs are ignored.
-    required: false
+      Path to the JSON-formatted SBOM file to attest. File size cannot exceed
+      16MB.
+    required: true
   push-to-registry:
     description: >
       Whether to push the provenance statement to the image registry. Requires
@@ -52,7 +53,7 @@ runs:
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path || steps.sbom-output.outputs.path }}
-    - uses: actions/attest@12c083815ed46d5d78222e3824f4a26c42c234d3 # v1.1.2
+    - uses: actions/attest@32795ed9174327efe1734fa6d09c9223658ef225 # v1.2.0
       id: attest
       with:
         subject-path: ${{ inputs.subject-path }}
