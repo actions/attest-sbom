@@ -158,7 +158,7 @@ jobs:
           sbom-path: 'sbom.spdx.json'
 ```
 
-### Identify Subjects by Wildcard
+### Identify Multiple Subjects
 
 If you are generating multiple artifacts, you can generate an attestation for
 each by using a wildcard in the `subject-path` input.
@@ -172,6 +172,23 @@ each by using a wildcard in the `subject-path` input.
 
 For supported wildcards along with behavior and documentation, see
 [@actions/glob][10] which is used internally to search for files.
+
+Alternatively, you can explicitly list multiple subjects with either a comma or
+newline delimited list:
+
+```yaml
+- uses: actions/attest-build-provenance@v1
+  with:
+    subject-path: 'dist/foo, dist/bar'
+```
+
+```yaml
+- uses: actions/attest-build-provenance@v1
+  with:
+    subject-path: |
+      dist/foo
+      dist/bar
+```
 
 ### Container Image
 
