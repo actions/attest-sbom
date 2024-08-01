@@ -140,6 +140,7 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
