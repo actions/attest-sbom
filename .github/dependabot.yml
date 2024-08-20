@@ -10,7 +10,7 @@ updates:
           - minor
           - patch
     ignore:
-      - dependency-name: "actions/attest-sbom"
+      - dependency-name: 'actions/attest-sbom'
 
   - package-ecosystem: npm
     directory: /
