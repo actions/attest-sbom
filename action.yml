@@ -59,7 +59,7 @@ runs:
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path }}
-    - uses: actions/attest@2da0b136720d14f01f4dbeeafd1d5a4d76cbe21d # v1.4.0
+    - uses: actions/attest@67422f5511b7ff725f4dbd6fb9bd2cd925c65a8d # v1.4.1
       id: attest
       with:
         subject-path: ${{ inputs.subject-path }}
