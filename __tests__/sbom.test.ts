@@ -17,7 +17,7 @@ describe('parseSBOMFromPath', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(tempDir, { recursive: true })
+    fs.rmSync(tempDir, { recursive: true })
   })
 
   it('correctly parses an SPDX file', async () => {

@@ -27,7 +27,7 @@ describe('SBOM Action', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(tempDir, { recursive: true })
+    fs.rmSync(tempDir, { recursive: true })
     outputs = {}
   })
 
