@@ -45,7 +45,7 @@ attest:
    your SBOM has been generated:
 
    ```yaml
-   - uses: actions/attest-sbom@v1
+   - uses: actions/attest-sbom@v2
      with:
        subject-path: '<PATH TO ARTIFACT>'
        sbom-path: '<PATH TO SBOM>'
@@ -60,7 +60,7 @@ attest:
 See [action.yml](action.yml)
 
 ```yaml
-- uses: actions/attest-sbom@v1
+- uses: actions/attest-sbom@v2
   with:
     # Path to the artifact serving as the subject of the attestation. Must
     # specify exactly one of "subject-path" or "subject-digest". May contain a
@@ -136,6 +136,7 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -152,7 +153,7 @@ jobs:
           format: 'spdx-json'
           output-file: 'sbom.spdx.json'
       - name: Attest
-        uses: actions/attest-sbom@v1
+        uses: actions/attest-sbom@v2
         with:
           subject-path: '${{ github.workspace }}/my-app'
           sbom-path: 'sbom.spdx.json'
@@ -164,7 +165,7 @@ If you are generating multiple artifacts, you can attest all of them at the same
 time by using a wildcard in the `subject-path` input.
 
 ```yaml
-- uses: actions/attest-sbom@v1
+- uses: actions/attest-sbom@v2
   with:
     subject-path: 'dist/**/my-bin-*'
     sbom-path: '${{ github.workspace }}/my-bin.sbom.spdx.json'
@@ -177,13 +178,13 @@ Alternatively, you can explicitly list multiple subjects with either a comma or
 newline delimited list:
 
 ```yaml
-- uses: actions/attest-sbom@v1
+- uses: actions/attest-sbom@v2
   with:
     subject-path: 'dist/foo, dist/bar'
 ```
 
 ```yaml
-- uses: actions/attest-sbom@v1
+- uses: actions/attest-sbom@v2
   with:
     subject-path: |
       dist/foo
@@ -246,7 +247,7 @@ jobs:
           format: 'cyclonedx-json'
           output-file: 'sbom.cyclonedx.json'
       - name: Attest
-        uses: actions/attest-sbom@v1
+        uses: actions/attest-sbom@v2
         id: attest
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
