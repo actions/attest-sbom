@@ -51,6 +51,12 @@ outputs:
   bundle-path:
     description: 'The path to the file containing the attestation bundle.'
     value: ${{ steps.attest.outputs.bundle-path }}
+  attestation-id:
+    description: 'The ID of the attestation.'
+    value: ${{ steps.attest.outputs.attestation-id }}
+  attestation-url:
+    description: 'The URL for the attestation summary.'
+    value: ${{ steps.attest.outputs.attestation-url }}
 
 runs:
   using: 'composite'
@@ -59,7 +65,7 @@ runs:
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path }}
-    - uses: actions/attest@v2.0.1
+    - uses: actions/attest@v2.1.0
       id: attest
       with:
         subject-path: ${{ inputs.subject-path }}
