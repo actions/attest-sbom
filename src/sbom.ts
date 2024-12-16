@@ -12,7 +12,7 @@ export async function parseSBOMFromPath(filePath: string): Promise<SBOM> {
   // Read the file content
   const fileContent = await fs.promises.readFile(filePath, 'utf8')
 
-  const sbom = JSON.parse(fileContent)
+  const sbom = JSON.parse(fileContent) as object
 
   if (checkIsSPDX(sbom)) {
     return { type: 'spdx', object: sbom }
