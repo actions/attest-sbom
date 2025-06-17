@@ -108,6 +108,13 @@ describe('generateSBOMPredicate', () => {
     expect(result.params).toEqual(sbom.object)
   })
 
+  it('throws an error for missing SPDX version', () => {
+    const sbom = { type: 'spdx' } as SBOM
+    expect(() => generateSBOMPredicate(sbom)).toThrow(
+      'Cannot find spdxVersion in the SBOM'
+    )
+  })
+
   it('generates CycloneDX predicate correctly', () => {
     const sbom = { type: 'cyclonedx', object: {} } as SBOM
     const result = generateSBOMPredicate(sbom)
@@ -116,10 +123,8 @@ describe('generateSBOMPredicate', () => {
   })
 
   it('throws error for unsupported SBOM formats', () => {
-    const sbom = { type: 'spdx', object: {} }
+    const sbom = { type: 'foo', object: {} }
     // @ts-expect-error test error case
-    expect(() => generateSBOMPredicate(sbom)).toThrow(
-      'Cannot find spdxVersion in the SBOM'
-    )
+    expect(() => generateSBOMPredicate(sbom)).toThrow('Unsupported SBOM format')
   })
 })

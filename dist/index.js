@@ -25800,13 +25800,14 @@ const storePredicate = (predicate) => {
 };
 exports.storePredicate = storePredicate;
 const generateSBOMPredicate = (sbom) => {
-    if (sbom.type === 'spdx') {
-        return generateSPDXIntoto(sbom.object);
+    switch (sbom.type) {
+        case 'spdx':
+            return generateSPDXIntoto(sbom.object);
+        case 'cyclonedx':
+            return generateCycloneDXIntoto(sbom.object);
+        default:
+            throw new Error('Unsupported SBOM format');
     }
-    if (sbom.type === 'cyclonedx') {
-        return generateCycloneDXIntoto(sbom.object);
-    }
-    throw new Error('Unsupported SBOM format');
 };
 exports.generateSBOMPredicate = generateSBOMPredicate;
 // ref: https://github.com/in-toto/attestation/blob/main/spec/predicates/spdx.md
