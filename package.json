@@ -1,7 +1,7 @@
 {
   "name": "actions/attest-sbom",
   "description": "Generate signed SBOM attestations",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "",
   "private": true,
   "homepage": "https://github.com/actions/attest-sbom",
@@ -21,7 +21,7 @@
     ".": "./dist/index.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
