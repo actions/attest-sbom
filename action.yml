@@ -67,7 +67,7 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/attest-sbom/predicate@534423496eab34674190bc45fdacbb8b1198e07f # predicate@1.0.0
+    - uses: actions/attest-sbom/predicate@55e972012fb8695c1b0049174547f1fcb4baa8a5 # predicate@2.0.0
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path }}
