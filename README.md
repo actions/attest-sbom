@@ -55,7 +55,7 @@ attest:
    your SBOM has been generated:
 
    ```yaml
-   - uses: actions/attest-sbom@v2
+   - uses: actions/attest-sbom@v3
      with:
        subject-path: '<PATH TO ARTIFACT>'
        sbom-path: '<PATH TO SBOM>'
@@ -70,7 +70,7 @@ attest:
 See [action.yml](action.yml)
 
 ```yaml
-- uses: actions/attest-sbom@v2
+- uses: actions/attest-sbom@v3
   with:
     # Path to the artifact serving as the subject of the attestation. Must
     # specify exactly one of "subject-path", "subject-digest", or
@@ -174,7 +174,7 @@ jobs:
           format: 'spdx-json'
           output-file: 'sbom.spdx.json'
       - name: Attest
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v3
         with:
           subject-path: '${{ github.workspace }}/my-app'
           sbom-path: 'sbom.spdx.json'
@@ -186,7 +186,7 @@ If you are generating multiple artifacts, you can attest all of them at the same
 time by using a wildcard in the `subject-path` input.
 
 ```yaml
-- uses: actions/attest-sbom@v2
+- uses: actions/attest-sbom@v3
   with:
     subject-path: 'dist/**/my-bin-*'
     sbom-path: '${{ github.workspace }}/my-bin.sbom.spdx.json'
@@ -199,13 +199,13 @@ Alternatively, you can explicitly list multiple subjects with either a comma or
 newline delimited list:
 
 ```yaml
-- uses: actions/attest-sbom@v2
+- uses: actions/attest-sbom@v3
   with:
     subject-path: 'dist/foo, dist/bar'
 ```
 
 ```yaml
-- uses: actions/attest-sbom@v2
+- uses: actions/attest-sbom@v3
   with:
     subject-path: |
       dist/foo
@@ -226,7 +226,7 @@ attestation.
 - name: Calculate artifact digests
   run: |
     shasum -a 256 foo_0.0.1_* > subject.checksums.txt
-- uses: actions/attest-sbom@v2
+- uses: actions/attest-sbom@v3
   with:
     subject-checksums: subject.checksums.txt
     sbom-path: sbom.spdx.json
@@ -303,7 +303,7 @@ jobs:
           format: 'cyclonedx-json'
           output-file: 'sbom.cyclonedx.json'
       - name: Attest
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v3
         id: attest
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
