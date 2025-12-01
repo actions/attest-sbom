@@ -73,7 +73,7 @@
     "@actions/core": "^1.11.1"
   },
   "devDependencies": {
-    "@actions/attest": "^1.6.0",
+    "@actions/attest": "^2.0.0",
     "@eslint/js": "^9.39.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
