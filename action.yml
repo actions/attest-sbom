@@ -71,7 +71,7 @@ runs:
       id: generate-sbom-predicate
       with:
         sbom-path: ${{ inputs.sbom-path }}
-    - uses: actions/attest@daf44fb950173508f38bd2406030372c1d1162b1 # v3.0.0
+    - uses: actions/attest@7667f588f2f73a90cea6c7ac70e78266c4f76616 # v3.1.0
       id: attest
       env:
         NODE_OPTIONS: '--max-http-header-size=32768'
