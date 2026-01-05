@@ -80,12 +80,12 @@
     "@vercel/ncc": "^0.38.4",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jest": "^29.6.0",
+    "eslint-plugin-jest": "^29.12.1",
     "jest": "^30.2.0",
     "markdownlint-cli": "^0.47.0",
     "prettier": "^3.7.4",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript-eslint": "^8.51.0"
   }
 }
