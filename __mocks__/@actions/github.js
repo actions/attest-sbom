@@ -2,7 +2,7 @@ module.exports = {
   context: {
     repo: { owner: 'test-owner', repo: 'test-repo' },
     runId: 12345,
-    workflow: 'ci.yml'
+    serverUrl: 'https://github.com'
   },
   getOctokit: jest.fn()
 }

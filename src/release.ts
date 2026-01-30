@@ -81,9 +81,11 @@ export function generateAssetName(runId: number, sbomPath: string): string {
 }
 
 export function buildAttesterId(
-  owner: string,
-  repo: string,
-  workflow: string
+  serverUrl: string,
+  workflowRef: string
 ): string {
-  return `https://github.com/${owner}/${repo}/.github/workflows/${workflow}`
+  // workflowRef is in the format: owner/repo/.github/workflows/file.yml@refs/heads/branch
+  // Extract just the owner/repo/.github/workflows/file.yml part
+  const workflowPath = workflowRef.split('@')[0]
+  return `${serverUrl}/${workflowPath}`
 }

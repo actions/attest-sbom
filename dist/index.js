@@ -58393,13 +58393,17 @@ async function run() {
         // Get context for release upload
         const { owner, repo } = github.context.repo;
         const runId = github.context.runId;
-        const workflow = github.context.workflow;
+        const serverUrl = github.context.serverUrl;
+        const workflowRef = process.env.GITHUB_WORKFLOW_REF;
+        if (!workflowRef) {
+            throw new Error('Missing GITHUB_WORKFLOW_REF environment variable');
+        }
         // Upload SBOM to release
         core.debug('Uploading SBOM to release');
         const octokit = github.getOctokit(token);
         const { downloadUrl } = await (0, release_1.uploadSBOMToRelease)(octokit, owner, repo, runId, sbomPath);
         // Generate reference predicate
-        const attesterId = (0, release_1.buildAttesterId)(owner, repo, workflow);
+        const attesterId = (0, release_1.buildAttesterId)(serverUrl, workflowRef);
         const mediaType = (0, reference_1.getMediaType)(sbom.type);
         const predicate = (0, reference_1.generateReferencePredicate)({
             attesterId,
@@ -58542,8 +58546,11 @@ function generateAssetName(runId, sbomPath) {
     const originalName = path_1.default.basename(sbomPath);
     return `${runId}-${originalName}`;
 }
-function buildAttesterId(owner, repo, workflow) {
-    return `https://github.com/${owner}/${repo}/.github/workflows/${workflow}`;
+function buildAttesterId(serverUrl, workflowRef) {
+    // workflowRef is in the format: owner/repo/.github/workflows/file.yml@refs/heads/branch
+    // Extract just the owner/repo/.github/workflows/file.yml part
+    const workflowPath = workflowRef.split('@')[0];
+    return `${serverUrl}/${workflowPath}`;
 }
 
 

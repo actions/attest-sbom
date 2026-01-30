@@ -13,17 +13,33 @@ describe('generateAssetName', () => {
 })
 
 describe('buildAttesterId', () => {
-  it('builds correct attester ID URL', () => {
-    const result = buildAttesterId('octocat', 'hello-world', 'ci.yml')
+  it('builds correct attester ID URL from workflow ref', () => {
+    const result = buildAttesterId(
+      'https://github.com',
+      'octocat/hello-world/.github/workflows/ci.yml@refs/heads/main'
+    )
     expect(result).toBe(
       'https://github.com/octocat/hello-world/.github/workflows/ci.yml'
     )
   })
 
-  it('handles workflow names with spaces', () => {
-    const result = buildAttesterId('owner', 'repo', 'Build and Test.yml')
+  it('handles workflow refs with tags', () => {
+    const result = buildAttesterId(
+      'https://github.com',
+      'owner/repo/.github/workflows/release.yml@refs/tags/v1.0.0'
+    )
     expect(result).toBe(
-      'https://github.com/owner/repo/.github/workflows/Build and Test.yml'
+      'https://github.com/owner/repo/.github/workflows/release.yml'
+    )
+  })
+
+  it('handles enterprise server URLs', () => {
+    const result = buildAttesterId(
+      'https://github.example.com',
+      'owner/repo/.github/workflows/build.yml@refs/heads/main'
+    )
+    expect(result).toBe(
+      'https://github.example.com/owner/repo/.github/workflows/build.yml'
     )
   })
 })

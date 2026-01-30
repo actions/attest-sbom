@@ -77,7 +77,12 @@ describe('SBOM Action', () => {
     }
     getInputMock.mockImplementation(mockInput(inputs))
     const originalEnv = process.env
-    process.env = { ...originalEnv, RUNNER_TEMP: '/tmp' }
+    process.env = {
+      ...originalEnv,
+      RUNNER_TEMP: '/tmp',
+      GITHUB_WORKFLOW_REF:
+        'test-owner/test-repo/.github/workflows/ci.yml@refs/heads/main'
+    }
 
     // Run the main function
     await main.run()
@@ -145,7 +150,12 @@ describe('SBOM Action', () => {
     }
     getInputMock.mockImplementation(mockInput(inputs))
     const originalEnv = process.env
-    process.env = { ...originalEnv, RUNNER_TEMP: '/tmp' }
+    process.env = {
+      ...originalEnv,
+      RUNNER_TEMP: '/tmp',
+      GITHUB_WORKFLOW_REF:
+        'test-owner/test-repo/.github/workflows/ci.yml@refs/heads/main'
+    }
 
     // Mock release not found
     mockGetReleaseByTag.mockRejectedValue({ status: 404 })

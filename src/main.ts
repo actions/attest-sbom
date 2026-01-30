@@ -27,7 +27,12 @@ export async function run(): Promise<void> {
     // Get context for release upload
     const { owner, repo } = github.context.repo
     const runId = github.context.runId
-    const workflow = github.context.workflow
+    const serverUrl = github.context.serverUrl
+    const workflowRef = process.env.GITHUB_WORKFLOW_REF
+
+    if (!workflowRef) {
+      throw new Error('Missing GITHUB_WORKFLOW_REF environment variable')
+    }
 
     // Upload SBOM to release
     core.debug('Uploading SBOM to release')
@@ -41,7 +46,7 @@ export async function run(): Promise<void> {
     )
 
     // Generate reference predicate
-    const attesterId = buildAttesterId(owner, repo, workflow)
+    const attesterId = buildAttesterId(serverUrl, workflowRef)
     const mediaType = getMediaType(sbom.type)
     const predicate = generateReferencePredicate({
       attesterId,
