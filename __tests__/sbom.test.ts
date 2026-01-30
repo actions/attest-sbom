@@ -1,9 +1,4 @@
-import {
-  storePredicate,
-  parseSBOMFromPath,
-  generateSBOMPredicate,
-  SBOM
-} from '../src/sbom'
+import { storePredicate, parseSBOMFromPath } from '../src/sbom'
 import type { Predicate } from '@actions/attest'
 import * as fs from 'fs'
 import os from 'os'
@@ -28,8 +23,7 @@ describe('parseSBOMFromPath', () => {
     const filePath = path.join(tempDir, 'spdxSBOM.json')
     fs.writeFileSync(filePath, spdxSBOM)
     await expect(parseSBOMFromPath(filePath)).resolves.toEqual({
-      type: 'spdx',
-      object: JSON.parse(spdxSBOM)
+      type: 'spdx'
     })
   })
 
@@ -43,8 +37,7 @@ describe('parseSBOMFromPath', () => {
     fs.writeFileSync(filePath, cycloneDXSBOM)
 
     await expect(parseSBOMFromPath(filePath)).resolves.toEqual({
-      type: 'cyclonedx',
-      object: JSON.parse(cycloneDXSBOM)
+      type: 'cyclonedx'
     })
   })
 
@@ -97,34 +90,5 @@ describe('storePredicate', () => {
 
     // Restore the original process.env
     process.env = originalEnv
-  })
-})
-
-describe('generateSBOMPredicate', () => {
-  it('generates SPDX predicate correctly', () => {
-    const sbom = { type: 'spdx', object: { spdxVersion: 'SPDX-2.2' } } as SBOM
-    const result = generateSBOMPredicate(sbom)
-    expect(result.type).toContain('https://spdx.dev/Document/v2.2')
-    expect(result.params).toEqual(sbom.object)
-  })
-
-  it('throws an error for missing SPDX version', () => {
-    const sbom = { type: 'spdx' } as SBOM
-    expect(() => generateSBOMPredicate(sbom)).toThrow(
-      'Cannot find spdxVersion in the SBOM'
-    )
-  })
-
-  it('generates CycloneDX predicate correctly', () => {
-    const sbom = { type: 'cyclonedx', object: {} } as SBOM
-    const result = generateSBOMPredicate(sbom)
-    expect(result.type).toEqual('https://cyclonedx.org/bom')
-    expect(result.params).toEqual(sbom.object)
-  })
-
-  it('throws error for unsupported SBOM formats', () => {
-    const sbom = { type: 'foo', object: {} }
-    // @ts-expect-error test error case
-    expect(() => generateSBOMPredicate(sbom)).toThrow('Unsupported SBOM format')
   })
 })
